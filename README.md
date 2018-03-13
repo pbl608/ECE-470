@@ -1,9 +1,11 @@
 # ECE-470
-Project
+Project: **Using UR3 to put trash in a bin**
 
 **Assignment 1**
 
 This project allows users to individually rotate the joints of a UR3 robot (manufactured by Universal Robots). The simulator we used is V-REP PRO EDU, and we used a Python API (using Anaconda) to code the robot.
+
+**MOTION DEMO**
 
 **1. Installing the necessary software**
 
@@ -47,3 +49,20 @@ This is the end of the simulation.
 **5. Running the code**
 
 To run the code, we will use an Anaconda Prompt. Open it, and use the 'cd' command to move to V-REP3\vrep_code. There, you will run the .py file with 'python assig1.py'. Then, the user can look at V-Rep Pro Edu and see the simulation.
+
+** FORWARD KINEMATICS **
+
+For this part of the project, we derived the forward kinematics of the robot. To do so, we took the dimensions of the robot (they are in the lab manual). Knowing them, we derived the six joint axes.
+
+All of them are revolute joints. We assigned the base frame as the one of the base of the robot. This means that the x-axis and y-axis intersect at the center of the base of the robot, while the z-axis, which is the vertical one, intersects with the XY plane 0.043m over the ground (this is, the origin of the frame is not on the ground). This was important because we had to notice that the dimensions are not the same as in the document (because the reference is the ground).
+
+Knowing the direction of the screw and a point of them, we were able to derive the six elements of them.
+
+Then, we wrote a function that takes a 6x1 vector as an input and gives a 4x4 skew-symmetric matrix as an output (this is, with the first three elements of the screw we derive a skew-symmetric matrix, which is inserted in rows 1:3, columns 1:3, and we put the last three elements in the first three elements of the last column. The last row is a row of zeros. With that function, we converted the six screws into matrices.
+
+After that, we used the function scipy.linalg.expm to derive the exponential matrix of the skew-symmetric matrices (each one multiplied by its joint angle). Using the @ operator, we multiplied all six exponential matrices between them, by order, and then, by M, which is the initial pose and was also derived knowing the dimensions of the robot. Doing so, we got T, the final pose.
+
+Now, we need the position and orientation. The position is easy to get: it is given by the first three elements of the last column of T. However, to get the angles, we had to derive the Euler angles (with the sequence 'xyz').
+
+
+
